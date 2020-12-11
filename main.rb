@@ -23,58 +23,50 @@ module Enumerable
     new_array
   end
 
-    def my_map
-      return self.dup unless block_given?
-
-      ary = []
-      self.each do |elem|
-        ary << yield(elem)
-      end
-
-      ary
-    end
-
-ary2 = [2, 3, 4]
-
-my_map
-
-
-
-
-
-def my_map
-    return self.dup unless block_given?
+  def my_map
+    return dup unless block_given?
 
     ary = []
-    self.my_each do |elem|
+    each do |elem|
       ary << yield(elem)
     end
 
     ary
   end
 
-
-
-
-def my_select
-    return self.dup unless block_given?
+  def my_map
+    return dup unless block_given?
 
     ary = []
-    self.my_each do |elem|
-      if yield (elem)
-         ary << elem
-        end
+    my_each do |elem|
+      ary << yield(elem)
     end
+
     ary
-  end
-  def my_reduce
-    return self.dup unless block_given?
+    end
+
+  def my_select
+    return dup unless block_given?
 
     ary = []
-    self.my_each do |elem|
-      if yield (elem)
-         ary << elem
-        end
+    my_each do |elem|
+      ary << elem if yield elem
     end
     ary
-  end
+    end
+
+  def my_all?
+    return nil unless block_given?
+
+    my_each do |elem|
+      return false unless yield elem
+    end
+    true
+      end
+    end
+
+
+testo=[1, 2, 3, 4, 5]
+
+
+print testo.my_all? {|elem| elem < 8 }
