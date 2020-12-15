@@ -100,15 +100,3 @@ def multiply_els(array)
 end
 
 # rubocop:disable Style/CaseEquality
-
-testo = [1, 2, 3, 4, 3]
-
-puts 'Test Array'
-puts testo
-puts testo.my_all? { |elem| elem < 8 }
-
-puts testo.my_any? { |elem| elem < 8 }
-
-puts testo.my_count
-
-puts multiply_els(testo)
