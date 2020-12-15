@@ -1,3 +1,4 @@
+# rubocop:disable Style/CaseEquality
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
@@ -15,16 +16,10 @@ module Enumerable
     self
   end
 
+
+
   def my_select
     return to_enum(:my_select) unless block_given?
-
-    new_array = []
-    my_each { |i| new_array << i if yield i }
-    new_array
-  end
-
-  def my_select
-    return dup unless block_given?
 
     ary = []
     my_each do |elem|
@@ -62,10 +57,18 @@ module Enumerable
       return false if yield elem
     end
     true
-            end
+  end
 
+  def my_any?
+   return nil unless block_given?
+
+    my_each do |elem|
+     return true if yield elem
+            end
+     false
+  end
   def my_count
-    return size unless block_given?
+    return self.size unless block_given?
 
     n = 0
     my_each do
@@ -95,3 +98,17 @@ module Enumerable
 def multiply_els(array)
   array.my_inject(:*)
 end
+
+# rubocop:disable Style/CaseEquality
+
+testo = [1, 2, 3, 4, 3]
+
+puts 'Test Array'
+puts testo
+puts testo.my_all? { |elem| elem < 8 }
+
+puts testo.my_any? { |elem| elem < 8 }
+
+puts testo.my_count
+
+puts multiply_els(testo)
