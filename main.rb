@@ -23,17 +23,6 @@ module Enumerable
     new_array
   end
 
-  def my_map
-    return self.dup unless block_given?
-
-    ary = []
-    my_each do |elem|
-      ary << yield(elem)
-    end
-
-    ary
-  end
-
   def my_select
     return self.dup unless block_given?
 
@@ -54,21 +43,25 @@ module Enumerable
   end
 
 
-    def my_any?
-      return nil unless block_given?
+  def my_map(proc = nil)
+    return self.dup unless block_given?
+    return self.dup if proc.nil?
 
-      my_each do |elem|
-        return true unless yield elem
-      end
-      false
-        end
+    ary = []
+    if proc.nil?
+      to_a.my_each { |elem| ary << yield(elem) }
+    else
+      to_a.my_each { |elem| ary << proc.call(elem) }
+    end
+    ary
+  end
 
 
   def my_none?
           return nil unless block_given?
 
           my_each do |elem|
-            return false unless yield elem
+            return false if yield elem
           end
           true
             end
@@ -84,13 +77,24 @@ module Enumerable
 
       end
 
-
+      def my_inject(arg = nil, sim = nil)
+        if block_given?
+          acc = arg
+          my_each do |i| acc = acc.nil? ? i : yield(acc, i) end
+          acc
+        elsif !arg.nil? && arg.is_a?(Symbol)
+          acc = nil
+          my_each do |i| acc = acc.nil? ? i : acc.send(arg, i) end
+          acc
+        elsif !sim.nil? && sim.is_a?(Symbol)
+          acc = arg
+          my_each do |i| acc = acc.nil? ? i : acc.send(sim, i) end
+          acc
+        else
+          yield
+        end
+      end
     end
-
-    testo = [1, 2, 3, 4, 3]
-
-puts testo.my_all? { |elem| elem < 8 }
-
-puts testo.my_any? { |elem| elem < 8 }
-
-puts testo.my_count
+    def multiply_els(array)
+  array.my_inject(:*)
+end
