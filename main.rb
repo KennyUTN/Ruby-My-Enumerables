@@ -24,7 +24,7 @@ module Enumerable
   end
 
   def my_select
-    return self.dup unless block_given?
+    return dup unless block_given?
 
     ary = []
     my_each do |elem|
@@ -42,10 +42,9 @@ module Enumerable
     true
   end
 
-
   def my_map(proc = nil)
-    return self.dup unless block_given?
-    return self.dup if proc.nil?
+    return dup unless block_given?
+    return dup if proc.nil?
 
     ary = []
     if proc.nil?
@@ -56,45 +55,43 @@ module Enumerable
     ary
   end
 
-
   def my_none?
-          return nil unless block_given?
+    return nil unless block_given?
 
-          my_each do |elem|
-            return false if yield elem
-          end
-          true
+    my_each do |elem|
+      return false if yield elem
+    end
+    true
             end
 
   def my_count
-              return self.size unless block_given?
+    return size unless block_given?
 
-              n = 0
-              my_each do n += 1
-
-              n
-            end
-
-      end
-
-      def my_inject(arg = nil, sim = nil)
-        if block_given?
-          acc = arg
-          my_each do |i| acc = acc.nil? ? i : yield(acc, i) end
-          acc
-        elsif !arg.nil? && arg.is_a?(Symbol)
-          acc = nil
-          my_each do |i| acc = acc.nil? ? i : acc.send(arg, i) end
-          acc
-        elsif !sim.nil? && sim.is_a?(Symbol)
-          acc = arg
-          my_each do |i| acc = acc.nil? ? i : acc.send(sim, i) end
-          acc
-        else
-          yield
-        end
-      end
+    n = 0
+    my_each do
+      n += 1
+      n
     end
-    def multiply_els(array)
+      end
+
+  def my_inject(arg = nil, sim = nil)
+    if block_given?
+      acc = arg
+      my_each { |i| acc = acc.nil? ? i : yield(acc, i) }
+      acc
+    elsif !arg.nil? && arg.is_a?(Symbol)
+      acc = nil
+      my_each { |i| acc = acc.nil? ? i : acc.send(arg, i) }
+      acc
+    elsif !sim.nil? && sim.is_a?(Symbol)
+      acc = arg
+      my_each { |i| acc = acc.nil? ? i : acc.send(sim, i) }
+      acc
+    else
+      yield
+    end
+  end
+    end
+def multiply_els(array)
   array.my_inject(:*)
 end
