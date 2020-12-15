@@ -27,7 +27,7 @@ To get a local copy up and running follow these simple example steps:
 - Change directory to folder to download repository
 - Run git clone https://github.com/KennyUTN/Ruby-My-Enumerables.git
 - Install Ruby
-- Run ruby main.rb
+- To to call the new methods, instead of using the #name of the Enumerable methods, use #my_name (for example: select would be my_select)
 
 To make any change,
 
@@ -38,7 +38,7 @@ To make any change,
 
 - Github: [@KennyUTN](https://github.com/KennyUTN)
 - Twitter: [@Kenny11614766](https://twitter.com/Kenny11614766)
-- Linkedin: [linkedin](https://www.linkedin.com/in/ignacio-asis-b8214b183/)
+- Linkedin: [Ignacio Asis](https://www.linkedin.com/in/ignacio-asis-b8214b183/)
 
 ## 🤝 Contributing
 
