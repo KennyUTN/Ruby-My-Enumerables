@@ -11,7 +11,7 @@ This is a project done for the Microverse Main Course.
 
 ## Live version
 
-[![Run on Repl.it](https://repl.it/@IgnacioAsis/BonyPreemptiveConcentrate)
+- [Run on Repl.it](https://repl.it/@IgnacioAsis/BonyPreemptiveConcentrate)
 
 ## Getting Started
 
