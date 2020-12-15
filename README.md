@@ -1,7 +1,7 @@
 
-# Custom enumerables on Ruby
+# Custom Enumerables on Ruby
 
-The following is a ..
+The following is a custom version of the Enumerables library of Ruby, it replicates some of the most commonly used methods.
 
 This is a project done for the Microverse Main Course.
 
@@ -11,7 +11,7 @@ This is a project done for the Microverse Main Course.
 
 ## Live version
 
-[![Run on Repl.it]()
+[![Run on Repl.it](https://repl.it/@IgnacioAsis/BonyPreemptiveConcentrate)
 
 ## Getting Started
 
