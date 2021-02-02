@@ -28,40 +28,30 @@ module Enumerable
   end
 
   def my_all?
-    flag = 0
-    self.class == Hash || self.class == Range ? arr = to_a : arr = self
-    case args.empty?
-    when true
-      if block_given?
-        arr.my_each do |i|
-          break if yield(i).nil? || yield(i) == false
-
-          flag += 1 if yield(i) != false || yield(i).nil?
+    if !args.nil? && !args.is_a?(Class)
+        if args.is_a?(Regexp)
+          my_each { |i| return false unless !i[args].nil? || i[args] == 1 }
+        else
+          my_each { |i| return false unless i == args }
         end
+      elsif args.is_a?(Class)
+        my_each { |i| return false unless i.is_a?(args) }
+      elsif args.nil? && block_given?
+        my_each { |i| return false unless yield i }
       else
-        arr.my_each { |i| flag += 1 unless i.nil? || i == false }
+        my_each { |i| return false if i.nil? || i == false }
       end
-    when false
-      if args[0].class == Regexp
-        arr.my_each { |itr| flag += 1 if itr =~ args[0] }
-      elsif args[0].class == Class
-        arr.my_each { |itr| flag += 1 if itr.is_a?(args[0]) }
-      else
-        arr.my_each { |itr| flag += 1 if args[0] == itr }
-      end
-    end
-    flag == size
+      true
   end
 
   def my_map(proc = nil)
-    return dup unless block_given?
-    return dup if proc.nil?
+  return to_enum(:my_map) if args.nil? && !block_given?
 
     ary = []
     if proc.nil?
-      to_a.my_each { |elem| ary << yield(elem) }
+      to_a.my_each_with_index { |elem i| ary[i] == yield elem }
     else
-      to_a.my_each { |elem| ary << proc.call(elem) }
+      to_a.my_each { |elem i| ary[i] == proc.call(elem) }
     end
     ary
   end
@@ -97,9 +87,22 @@ module Enumerable
     flag.positive?
   end
 
-  def my_none?
-    !my_any?(*args, &block)
-  end
+  def my_none?(args = nil)
+    return true if self == [] || nil?
+    if !block_given? && args.nil?
+        my_each { |i| return false if !i.nil? && i != false }
+      elsif args.is_a?(Regexp)
+        my_each { |i| return false if i.to_s =~ args }
+      elsif args.is_a?(Class)
+        my_each { |i| return false if i.is_a?(args) }
+      elsif !args.is_a?(Class) && !block_given?
+        my_each { |i| return false if i == args }
+      elsif block_given?
+        my_each { |i| return false if yield i }
+      end
+      true
+    end
+
 
   def my_count(*arg)
     n = 0
@@ -118,26 +121,32 @@ module Enumerable
   end
 
   def my_inject(arg = nil, sim = nil)
-    if block_given?
-      acc = arg
-      my_each { |i| acc = acc.nil? ? i : yield(acc, i) }
-      acc
-    elsif !arg.nil? && arg.is_a?(Symbol)
-      acc = nil
-      my_each { |i| acc = acc.nil? ? i : acc.send(arg, i) }
-      acc
-    elsif !sim.nil? && sim.is_a?(Symbol)
-      acc = arg
-      my_each { |i| acc = acc.nil? ? i : acc.send(sim, i) }
-      acc
-    else
-      yield
-    end
-  end
+    raise TypeError, "#{arg} is not a symbol/string" if arg.is_a?(Integer) && sim.nil? && !block_given?
+
+    raise LocalJumpError, 'No block Given/Empty Argument' if arg.nil? && sim.nil? && !block_given?
+
+    memo = nil
+     symbol = nil
+     if !arg.nil? && !sim.nil?
+       memo = arg
+       symbol = sim
+       my_each do |i|
+         memo = memo.send(symbol, i)
+       end
+     elsif arg.is_a? Symbol
+       symbol = arg
+       my_each { |i| memo = (memo ? memo.send(symbol, i) : i) }
+     else
+       memo = arg
+       my_each { |i| memo = (memo ? yield(memo, i) : i) }
+     end
+     memo
+   end
 end
 
 # rubocop: enable Metrics/ModuleLength, Style/ConditionalAssignment
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
-def multiply_els(array)
+def multiply_els(array = nil)
+  raise TypeError, 'No Array Given' if arg.nil? || !arg.is_a?(Array)
   array.my_inject(:*)
 end
