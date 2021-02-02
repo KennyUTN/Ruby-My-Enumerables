@@ -22,11 +22,10 @@ To get a local copy up and running follow these simple example steps:
 - [Ruby](https://ruby-doc.org/downloads/)
 
 ### Setup
-
+- Install Ruby
 - Open Terminal
 - Change directory to folder to download repository
 - Run git clone https://github.com/KennyUTN/Ruby-My-Enumerables.git
-- Install Ruby
 - To to call the new methods, instead of using the #name of the Enumerable methods, use #my_name (for example: select would be my_select)
 
 To make any change,
