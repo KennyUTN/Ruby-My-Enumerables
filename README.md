@@ -11,7 +11,7 @@ This is a project done for the Microverse Main Course.
 
 ## Live version
 
-- [Run GitHUB Classroom(https://repl.it/@IgnacioAsis/BonyPreemptiveConcentrate)
+- [See it on Repl.it](https://repl.it/@IgnacioAsis/SomeCoolCode)
 
 ## Getting Started
 
