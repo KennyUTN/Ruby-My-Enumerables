@@ -45,15 +45,15 @@ module Enumerable
   end
 
   def my_map(proc = nil)
-  return to_enum(:my_map) if args.nil? && !block_given?
+  return to_enum(:my_map) if proc.nil? && !block_given?
 
     ary = []
     if proc.nil?
-      to_a.my_each_with_index { |elem i| ary[i] == yield elem }
+      my_each_with_index { |i, j| ary[j] = yield i }
     else
-      to_a.my_each { |elem i| ary[i] == proc.call(elem) }
+      my_each_with_index { |i, j| ary[j] = proc.call(i) }
     end
-    ary
+    new_array
   end
 
   def my_any?
