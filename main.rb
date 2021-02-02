@@ -1,4 +1,4 @@
-# rubocop: disable Metrics/ModuleLength, Style/ConditionalAssignment
+# rubocop: disable Metrics/ModuleLength
 # rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
 module Enumerable
   def my_each
@@ -29,23 +29,23 @@ module Enumerable
 
   def my_all?
     if !args.nil? && !args.is_a?(Class)
-        if args.is_a?(Regexp)
-          my_each { |i| return false unless !i[args].nil? || i[args] == 1 }
-        else
-          my_each { |i| return false unless i == args }
-        end
-      elsif args.is_a?(Class)
-        my_each { |i| return false unless i.is_a?(args) }
-      elsif args.nil? && block_given?
-        my_each { |i| return false unless yield i }
+      if args.is_a?(Regexp)
+        my_each { |i| return false unless !i[args].nil? || i[args] == 1 }
       else
-        my_each { |i| return false if i.nil? || i == false }
+        my_each { |i| return false unless i == args }
       end
-      true
+    elsif args.is_a?(Class)
+      my_each { |i| return false unless i.is_a?(args) }
+    elsif args.nil? && block_given?
+      my_each { |i| return false unless yield i }
+    else
+      my_each { |i| return false if i.nil? || i == false }
+    end
+    true
   end
 
   def my_map(proc = nil)
-  return to_enum(:my_map) if proc.nil? && !block_given?
+    return to_enum(:my_map) if proc.nil? && !block_given?
 
     ary = []
     if proc.nil?
@@ -89,20 +89,20 @@ module Enumerable
 
   def my_none?(args = nil)
     return true if self == [] || nil?
-    if !block_given? && args.nil?
-        my_each { |i| return false if !i.nil? && i != false }
-      elsif args.is_a?(Regexp)
-        my_each { |i| return false if i.to_s =~ args }
-      elsif args.is_a?(Class)
-        my_each { |i| return false if i.is_a?(args) }
-      elsif !args.is_a?(Class) && !block_given?
-        my_each { |i| return false if i == args }
-      elsif block_given?
-        my_each { |i| return false if yield i }
-      end
-      true
-    end
 
+    if !block_given? && args.nil?
+      my_each { |i| return false if !i.nil? && i != false }
+    elsif args.is_a?(Regexp)
+      my_each { |i| return false if i.to_s =~ args }
+    elsif args.is_a?(Class)
+      my_each { |i| return false if i.is_a?(args) }
+    elsif !args.is_a?(Class) && !block_given?
+      my_each { |i| return false if i == args }
+    elsif block_given?
+      my_each { |i| return false if yield i }
+    end
+    true
+  end
 
   def my_count(*arg)
     n = 0
@@ -126,27 +126,28 @@ module Enumerable
     raise LocalJumpError, 'No block Given/Empty Argument' if arg.nil? && sim.nil? && !block_given?
 
     memo = nil
-     symbol = nil
-     if !arg.nil? && !sim.nil?
-       memo = arg
-       symbol = sim
-       my_each do |i|
-         memo = memo.send(symbol, i)
-       end
-     elsif arg.is_a? Symbol
-       symbol = arg
-       my_each { |i| memo = (memo ? memo.send(symbol, i) : i) }
-     else
-       memo = arg
-       my_each { |i| memo = (memo ? yield(memo, i) : i) }
-     end
-     memo
-   end
+    symbol = nil
+    if !arg.nil? && !sim.nil?
+      memo = arg
+      symbol = sim
+      my_each do |i|
+        memo = memo.send(symbol, i)
+      end
+    elsif arg.is_a? Symbol
+      symbol = arg
+      my_each { |i| memo = (memo ? memo.send(symbol, i) : i) }
+    else
+      memo = arg
+      my_each { |i| memo = (memo ? yield(memo, i) : i) }
+    end
+    memo
+  end
 end
 
-# rubocop: enable Metrics/ModuleLength, Style/ConditionalAssignment
+# rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
 def multiply_els(array = nil)
   raise TypeError, 'No Array Given' if arg.nil? || !arg.is_a?(Array)
+
   array.my_inject(:*)
 end
