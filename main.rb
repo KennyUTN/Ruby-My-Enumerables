@@ -126,6 +126,11 @@ module Enumerable
     memo
   end
 end
+def multiply_els(array)
+  array.my_inject do |result, item|
+    result * item
+  end
+end
 
 # rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity

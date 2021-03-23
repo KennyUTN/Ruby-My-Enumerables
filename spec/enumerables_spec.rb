@@ -164,5 +164,10 @@ describe Enumerable do
       expect(normal_array.my_inject(1, :*)).to eq(normal_array.inject(1, :*))
     end
   end
+  describe '#multiply_els' do
+    it 'Checks if it returns the correct value' do
+      expect(multiply_els(normal_array)).to eq(120)
+    end
+  end
   # rubocop: enable  Lint/Void
 end
