@@ -1,5 +1,5 @@
 # rubocop: disable Metrics/ModuleLength
-# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
+# rubocop: disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
@@ -27,7 +27,7 @@ module Enumerable
     ary
   end
 
-  def my_all?
+  def my_all?(args = nil)
     if !args.nil? && !args.is_a?(Class)
       if args.is_a?(Regexp)
         my_each { |i| return false unless !i[args].nil? || i[args] == 1 }
@@ -45,46 +45,29 @@ module Enumerable
   end
 
   def my_map(proc = nil)
-    return to_enum(:my_map) if proc.nil? && !block_given?
+    return to_enum unless block_given?
 
-    ary = []
-    if proc.nil?
-      my_each_with_index { |i, j| ary[j] = yield i }
-    else
-      my_each_with_index { |i, j| ary[j] = proc.call(i) }
+    var = self
+    result = []
+    var.my_each do |x|
+      result << (block_given? ? yield(x) : proc.call(x))
     end
-    new_array
+    result
   end
 
-  def my_any?
-    flag = 0
-    case args.empty?
-    when true
-      if block_given?
-        my_each do |i|
-          flag += 1 if block.call(i)
-        end
-      else
-        my_each do |i|
-          flag += 1 unless i.nil? || i == false
-        end
-      end
-    when false
-      if args[0].class == Regexp
-        my_each do |itr|
-          flag += 1 if itr =~ args[0]
-        end
-      elsif args[0].class == Class
-        my_each do |itr|
-          flag += 1 if itr.is_a?(args[0])
-        end
-      else
-        my_each do |itr|
-          flag += 1 if args[0] == itr
-        end
-      end
+  def my_any?(param = nil)
+    if block_given?
+      my_each { |i| return true if yield(i) }
+    elsif param.is_a? Class
+      my_each { |i| return true if i.is_a? param }
+    elsif param.is_a? Regexp
+      my_each { |i| return true if param =~ i }
+    elsif param.nil?
+      my_each { |i| return true if i }
+    else
+      my_each { |i| return true if i == param }
     end
-    flag.positive?
+    false
   end
 
   def my_none?(args = nil)
@@ -143,11 +126,11 @@ module Enumerable
     memo
   end
 end
+def multiply_els(array)
+  array.my_inject do |result, item|
+    result * item
+  end
+end
 
 # rubocop: enable Metrics/ModuleLength
-# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
-def multiply_els(array = nil)
-  raise TypeError, 'No Array Given' if arg.nil? || !arg.is_a?(Array)
-
-  array.my_inject(:*)
-end
+# rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity

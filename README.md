@@ -32,6 +32,12 @@ To make any change,
 
 - Open related file by using text editor.
 
+## Steps to validate code using Rspec
+- Once you have clone the repository make sure that you have Rspec install by running rspec --version
+- If you do not have Rspec installed do so by following the Instructions [here](https://medium.com/@amliving/my-rails-rspec-set-up-6451269847f9)
+- Then move to the directory spec and run this command 'rspec enumerables_spec.rb'
+- Optional: Use 'rspec enumerables_spec.rb -f d' for better formatting
+
 ## Author
 👤 **Juan Ignacio Asis**
 
