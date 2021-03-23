@@ -10,16 +10,12 @@ describe Enumerable do
   let(:hash2) { {} }
 
   describe '#my_each' do
-    subject { normal_array.each { |i| i * i } }
     it 'Block Given, Travels array' do
-      subject { normal_array.each { |i| i * i } }
-      expect(subject).to eql(normal_array.my_each { |i| i * i })
+      expect(normal_array.each { |i| i * i }).to eql(normal_array.my_each { |i| i * i })
     end
-  end
-
-  subject { normal_array.my_each }
-  it 'No Block Given, Returns Enum' do
-    expect(subject).to be_a(Enumerable)
+    it 'No Block Given, Returns Enum' do
+      expect(normal_array.my_each).to be_a(Enumerable)
+    end
   end
 
   describe '#my_each_with_index' do

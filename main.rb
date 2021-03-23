@@ -129,8 +129,3 @@ end
 
 # rubocop: enable Metrics/ModuleLength
 # rubocop: enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-def multiply_els(array = nil)
-  raise TypeError, 'No Array Given' if arg.nil? || !arg.is_a?(Array)
-
-  array.my_inject(:*)
-end
