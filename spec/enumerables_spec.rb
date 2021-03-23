@@ -1,236 +1,172 @@
 require_relative '../main.rb'
-require 'rspec'
-
+# rubocop: disable  Lint/Void
 describe Enumerable do
-  let(:arr) { [1, 2, 3, 4, 5] }
-  let(:numbers) { [1, 5.98, 3] }
-  let(:words) { %w[jan ken pon] }
-  let(:salad_array) { [nil, false, 69_420] }
+  let(:normal_array) { [1, 2, 3, 4, 5] }
+  let(:words) { %w[ant bear cat] }
+  let(:salad) { [nil, true, 99] }
+  let(:numbers) { [1, 3.14, 2i] }
   let(:empty_array) { [] }
   let(:hash) { {} }
   let(:hash2) { {} }
 
   describe '#my_each' do
-    subject { arr.each { |i| i * i } }
-    it 'Goes through the array 1 at a  time' do
-      expect(subject).to eql(arr.my_each { |i| i * i })
+    subject { normal_array.each { |i| i * i } }
+    it 'Block Given, Travels array' do
+      subject { normal_array.each { |i| i * i } }
+      expect(subject).to eql(normal_array.my_each { |i| i * i })
     end
   end
 
+  subject { normal_array.my_each }
+  it 'No Block Given, Returns Enum' do
+    expect(subject).to be_a(Enumerable)
+  end
 
+  describe '#my_each_with_index' do
+    it 'Block Given, Travels array with index' do
+      normal_array.each_with_index { |i, indx| hash[i] = indx }
+      normal_array.my_each_with_index { |i, indx| hash2[i] = indx }
+      expect(hash).to eql(hash2)
+    end
 
-    it 'Returns enumerable No block Given' do
-        subject { arr.my_each }
-      expect subject.to be_a(Enumerable)
+    subject { normal_array.my_each_with_index }
+    it 'No block, returns enum' do
+      expect(subject).to be_a(Enumerable)
     end
   end
 
-  escribe '#my_each_with_index' do
-
-
-        it 'Travels the array, If block is given ' do
-          arr.each_with_index { |i, indx| hash_one[i] = indx }
-          arr.my_each_with_index { |i, indx| hash_two[i] = indx }
-          expect(hash_one).to eql(hash_two)
-        end
-
-
-
-        subject { arr.my_each_with_index }
-        it 'Returns an enumerator if no block is given' do
-          expect(subject).to be_a(Enumerable)
-
-      end
+  describe '#my_select' do
+    it 'Returns the selected item of specific condition' do
+      original_arr = normal_array.my_select { |x| x > 2 }
+      test_arr = normal_array.my_select { |x| x > 2 }
+      expect(test_arr).to eql(original_arr)
     end
 
-    describe '#my_select' do
-      it 'Returns the selected item according to the specified conditions' do
-        original = arr.my_select { |x| x > 1 }
-        test = arr.my_select { |x| x > 1 }
-        expect(test).to eql(original)
-      end
-
-
-        it 'returns an Enumerator when no block given If a block is given' do
-          expect(arr.my_select.is_a?(Enumerator)).to be(true)
-
-      end
-
-
-        it 'Returns an enumerator If no block is given' do
-          expect(arr.my_each.is_a?(Enumerable)).to be true
-
-      end
+    it 'returns an Enumerator when no block given' do
+      expect(normal_array.my_select.is_a?(Enumerator)).to be(true)
     end
 
-    describe '#my_all' do
-      it 'Returns true if the elements are true else it returns an empty array' do
-        original = arr.all? { |x| x < 8 }
-        test = arr.my_all? { |x| x < 8 }
-        expect(test).to eql(original)
-      end
+    it 'No block Given, Returns an enumerator' do
+      expect(normal_array.my_each.is_a?(Enumerable)).to be true
+    end
+  end
 
-
-        it 'Returns true when all the elements belong to the class' do
-          expect(arr.my_all?(Integer)).to eql(true)
-        end
-
-
-
-      it 'Regexp: returns true when all elements match the passed argument or false otherwise' do
-        expect(words.my_all?(/[a-z]/)).to eql(true)
-        expect(words.my_all?(/d/)).to eql(false)
-      end
-
-
-
-        it 'it returns false if a string is given' do
-          subject { words.my_all?('hello') }
-          expect(subject).to be false
-      end
-
-
-
-        it 'returns false If a number is given' do
-          expect(numbers.my_all?(25)).to be false
-        end
+  describe '#my_all' do
+    it 'Returns true if all elements meets condition' do
+      original_arr = normal_array.all? { |x| x > 0 }
+      test_arr = normal_array.my_all? { |x| x > 0 }
+      expect(test_arr).to eql(original_arr)
     end
 
-    describe '#my_any?' do
-
-
-
-        it 'Block: Returns true' do
-          subject { words.my_any? { |word| word.length >= 2 } }
-          expect(subject).to be true
-        end
-
-
-    
-        subject { salad_array.my_any?(Integer) }
-        it 'Arg: returns true if theres a element in the array' do
-          expect(subject).to be true
-        end
-      end
-
-      context 'If nor argument is given ' do
-        subject { salad_array.my_any? }
-        it 'returns true if there a true in the array' do
-          expect(subject).to be true
-        end
-      end
-
-      context 'If a string is given' do
-        subject { words.my_all?('hello') }
-        it 'it returns false' do
-          expect(subject).to be false
-        end
-      end
-
-      context 'If a number is given' do
-        subject { numbers.my_all?(5) }
-        it 'returns false' do
-          expect(subject).to be false
-        end
-      end
+    it 'Argument: Returns true when all the elements belong to the class' do
+      expect(normal_array.my_all?(Integer)).to eql(true)
+      expect(normal_array.my_all?(String)).to eql(false)
     end
 
-    describe '#my_none?' do
-      context 'If block is given' do
-        subject { words.my_none? { |word| word.length == 5 } }
-        it 'return true if block never return true for all elemetns' do
-          expect(subject).to be true
-        end
-      end
-
-      context 'If an argument is given' do
-        subject { numbers.my_none?(Float) }
-        it 'return false if all elements are true' do
-          expect(subject).to be false
-        end
-      end
-
-      context 'If no arguments is given' do
-        subject { empty_array.my_none? }
-        it 'returns true if all elements are false or nil' do
-          expect(subject).to be true
-        end
-      end
-
-      context 'If a string is given' do
-        subject { words.my_all?('hello') }
-        it 'it returns false' do
-          expect(subject).to be false
-        end
-      end
-
-      context 'If a number is given' do
-        subject { numbers.my_all?(5) }
-        it 'returns false' do
-          expect(subject).to be false
-        end
-      end
+    it 'Regexp: returns true if elements match regexp, false otherwise' do
+      expect(words.my_all?(/[a-z]/)).to eql(true)
+      expect(words.my_all?(/d/)).to eql(false)
     end
 
-    describe '#my_count' do
-      it 'takes an enumerable collection and counts how many elements match the given criteria.' do
-        original_arr = arr.count { |x| x > 5 }
-        test_arr = arr.my_count { |x| x > 5 }
-        expect(test_arr).to eql(original_arr)
-      end
-
-      it 'returns array length when no block given' do
-        expect(arr.my_count).to eql(5)
-      end
-
-      it 'returns the number of elements that is equal to the given argument' do
-        expect(arr.my_count(2)).to eq(1)
-      end
-
-      it 'returns the number of elements that match with a given condition' do
-        expect(arr.my_count(&:even?)).to eq(2)
-      end
+    subject { words.my_all?('hello') }
+    it 'If string given: it returns false' do
+      expect(subject).to be false
     end
 
-    describe '#my_map' do
-      it 'returns a new array with the results of running block.' do
-        original_arr = arr.map { |x| x * x }
-        test_arr = arr.my_map { |x| x * x }
-        expect(test_arr).to eql(original_arr)
-      end
+    subject { numbers.my_all?(5) }
+    it 'Number given: returns false' do
+      expect(subject).to be false
+    end
+  end
 
-      it 'returns array of strings when given array of integers' do
-        expect(arr.my_map(&:to_s)).to eq(%w[1 2 3 4 5])
-      end
+  describe '#my_any?' do
+    it 'Block Given: Returns true if ever return a value other than false or nil' do
+      expect(words.my_any? { |word| word.length >= 3 }).to be true
     end
 
-    describe '#my_inject' do
-      context 'If block is given' do
-        subject { arr.my_inject { |sum, n| sum + n } }
-        it 'returns an accumulator that stores the result of the block' do
-          expect(subject).to eq(arr.inject { |sum, n| sum + n })
-        end
-      end
-
-      context 'If a symbol is given' do
-        subject { arr.my_inject :* }
-        it 'returns an accumulator executing the operator symbol' do
-          expect(subject).to eq((arr.inject :*))
-        end
-      end
-
-      context 'If an argument and a block is given' do
-        subject { arr.my_inject(1) { |prod, n| prod * n } }
-        it 'return an accumulator, the arg is going to be the first value' do
-          expect(subject).to eq(arr.inject(1) { |prod, n| prod * n })
-        end
-      end
-
-      context 'If an argument and a symbol is given' do
-        subject { arr.my_inject(1, :*) }
-        it 'The argument be the initial value and return an acc exec the symbol' do
-          expect(subject).to eq(arr.inject(1, :*))
-        end
-      end
+    subject { words.my_all?('hello') }
+    it 'String given: it returns false' do
+      expect(subject).to be false
     end
+
+    subject { numbers.my_all?(8) }
+    it 'Number given: returns false' do
+      expect(subject).to be false
+    end
+  end
+
+  describe '#my_none?' do
+    it 'Block Given: return true if block never return true for all elemetns' do
+      expect(words.my_none? { |word| word.length == 5 }).to be true
+    end
+
+    it 'Argument Given: return false if all elements are true' do
+      expect(numbers.my_none?(Float)).to be false
+    end
+
+    subject { empty_array.my_none? }
+    it 'no arg given returns true if all elements are false or nil' do
+      expect(empty_array.my_none?).to be true
+    end
+
+    it 'String given: it returns false' do
+      expect(words.my_all?('non_existant_string')).to be false
+    end
+
+    subject { numbers.my_all?(5) }
+    it 'Number given: returns false' do
+      expect(numbers.my_all?(6)).to be false
+    end
+  end
+
+  describe '#my_count' do
+    it 'Compares count to my_count' do
+      original_arr = normal_array.count { |x| x > 5 }
+      test_arr = normal_array.my_count { |x| x > 5 }
+      expect(test_arr).to eql(original_arr)
+    end
+
+    it 'No block Given: Returns length' do
+      expect(normal_array.my_count).to eql(5)
+    end
+
+    it 'Counts a specific element' do
+      expect(normal_array.my_count(2)).to eq(1)
+    end
+
+    it 'Counts elements that match a condition' do
+      expect(normal_array.my_count(&:even?)).to eq(2)
+    end
+  end
+
+  describe '#my_map' do
+    it 'Compares map to my_map' do
+      original_arr = normal_array.map { |x| x * x }
+      test_arr = normal_array.my_map { |x| x * x }
+      expect(test_arr).to eql(original_arr)
+    end
+
+    it 'Turns a number array to a string array' do
+      expect(normal_array.my_map(&:to_s)).to eq(%w[1 2 3 4 5])
+    end
+  end
+
+  describe '#my_inject' do
+    it 'Block Given: returns an accumulator that stores the result of the block' do
+      expect(normal_array.my_inject { |sum, n| sum + n }).to eq(normal_array.inject { |sum, n| sum + n })
+    end
+
+    it 'Symbol Given: returns an accumulator executing the operator symbol' do
+      expect(normal_array.my_inject(:*)).to eq((normal_array.inject :*))
+    end
+
+    it 'Arg + Block given : return an accumulator, the arg is going to be the first value' do
+      expect(normal_array.my_inject(1) { |prod, n| prod * n }).to eq(normal_array.inject(1) { |prod, n| prod * n })
+    end
+
+    it 'Arg + Symbol Given: Executes the symbol on accumulator, the argument is first value' do
+      expect(normal_array.my_inject(1, :*)).to eq(normal_array.inject(1, :*))
+    end
+  end
+  # rubocop: enable  Lint/Void
 end
